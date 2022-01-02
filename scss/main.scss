@@ -1,11 +1,29 @@
-$primary-color: #272727;
-$accent-color: #ff652f;
-$text-color: #fff;
-$font-weights: (
-    "regular": 400,
-    "medium": 500,
-    "bold": 700
-);
+@import './resets';
+@import './variable';
+
+@function weight($weight-name) { // 값을 계산해서 반환
+    @return map-get($font-weights, $weight-name);
+}
+
+@mixin flexCenter($direction) { // 여러가지 디자인 정의
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: $direction;
+}
+
+@mixin theme($light-theme: true) {
+    @if $light-theme {
+        background: lighten($primary-color, 100%); // 색깔 밝기 설정 function
+        color: darken($text-color, 100%); // 색깔 어둡기 설정 fucntion
+    }
+}
+
+@mixin mobile {
+    @media (max-width: $mobile) {
+        @content; // mixin에 @content를 정의해 놓으면 사용할 때, 내용을 수정해서 사용가능
+    }
+}
 
 body {
     background: $primary-color;
@@ -13,14 +31,31 @@ body {
 }
 
 .main {
-    width: 80%;
+    @include flexCenter(row);
+    width: 80% - 40%;
     margin: 0 auto; // auto는 가로 중앙에 배치한다는 뜻
 
-    #{&}__paragraph { // & == parent, #{&} 오로지 부모의 자식에게만 적용
-        font-weight: map-get($font-weights, bold);
+    #{&}__paragraph1 { // & == parent, #{&} 오로지 부모의 자식에게만 적용
+        font-weight: weight(bold);
 
         &:hover {
             color: pink;
         }
     }
+
+    #{&}__paragraph2 {
+        @extend .main__paragraph1; // 속성 확장
+
+        &:hover {
+            color: $accent-color; // 속성 재정의
+        }
+    }
+
+    @include mobile{
+        flex-direction: column;
+    }
+}
+
+.light {
+    @include theme($light-theme: true);
 }
